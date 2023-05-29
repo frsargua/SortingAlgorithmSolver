@@ -1,0 +1,8 @@
+.hideTimer {
+  opacity: 0;
+}
+
+.showTimer {
+  transition: opacity 1s ease-in-out;
+  opacity: 1;
+}

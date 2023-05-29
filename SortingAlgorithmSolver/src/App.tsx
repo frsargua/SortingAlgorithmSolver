@@ -10,6 +10,7 @@ function App() {
   const [delayTime, setDelayTime] = useState(1000);
   const [numbers, setNumbers] = useState<number[]>([]);
   const [swapIndices, setSwapIndices] = useState([0, 1]);
+  const [swapColor, setSwapColor] = useState(false);
   const [runAlgorithm, setRunAlgorithm] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const [timerStart, setTimerStart] = useState(null);
@@ -31,6 +32,10 @@ function App() {
     }
   };
 
+  const swapColorToReverse = () => {
+    setSwapColor((prev) => !prev);
+  };
+
   const handleTaskComplete = () => {
     const endTime = new Date();
     const timeDiff = endTime.getTime() - timerStart.getTime(); // strip the ms
@@ -49,6 +54,15 @@ function App() {
       setTimerStart(new Date());
       setRunAlgorithm(() => true);
     }
+  };
+
+  const createNew = () => {
+    setElapsedTime(0);
+    setTimerStart(null);
+    setNumbers([]);
+    setInputValue("");
+    setRunAlgorithm(false);
+    setSwapIndices([0, 1]);
   };
 
   function bibleSort(arr: number[]) {
@@ -73,13 +87,20 @@ function App() {
           setSwapIndices([i, i + 1]);
           await wait(delayTime / 2);
           if (arr[i] > arr[i + 1]) {
-            console.log([i, i + 1]);
             [arr[i], arr[i + 1]] = [arr[i + 1], arr[i]];
             sorted = false;
           }
         }
 
+        if (arr[i] > arr[i + 1]) {
+          setSwapColor(true);
+        } else {
+          setSwapColor(false);
+        }
+
         await process();
+        await setSwapColor(false);
+
         i++;
 
         if (i >= end) {
@@ -124,9 +145,14 @@ function App() {
       <div className="container mt-4 d-flex flex-column justify-content-center align-items-center">
         <SpeedToggler delayTime={delayTime} handleChange={handleChange} />
         <NumberInputter handleSubmit={handleSubmit} inputValue={inputValue} />
-        <button className="btn btn-primary mt-2" onClick={startAlgorthm}>
-          Run
-        </button>
+        <div>
+          <button className="btn btn-primary mt-2 me-1" onClick={startAlgorthm}>
+            Run
+          </button>
+          <button className="btn btn-success mt-2" onClick={createNew}>
+            Create New
+          </button>
+        </div>
         <div className="d-flex justify-content-center  align-items-center mt-4">
           <Canvas
             width={1000}
@@ -134,6 +160,7 @@ function App() {
             numbers={numbers}
             swapIndices={swapIndices}
             timeTaken={elapsedTime}
+            swapColor={swapColor}
           />
         </div>
       </div>
